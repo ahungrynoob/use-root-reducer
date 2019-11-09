@@ -1,0 +1,40 @@
+{
+  "name": "use-root-reducer",
+  "version": "0.1.0",
+  "description": "a helper to create and maintain a global state without redux. (based on react hook)",
+  "main": "dist/index.js",
+  "module": "dist/index.esm.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "sideEffects": false,
+  "devDependencies": {
+    "@types/jest": "^24.0.22",
+    "father": "^2.24.1"
+  },
+  "peerDependencies": {
+    "react": "^16.8.0"
+  },
+  "scripts": {
+    "build": "father build",
+    "test": "father test",
+    "ci": "father test --coverage"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ahungrynoob/use-root-reducer.git"
+  },
+  "keywords": [
+    "react",
+    "hook",
+    "useContext",
+    "useState"
+  ],
+  "author": "ahungrynoob",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ahungrynoob/use-root-reducer/issues"
+  },
+  "homepage": "https://github.com/ahungrynoob/use-root-reducer#readme"
+}
