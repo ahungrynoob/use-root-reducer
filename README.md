@@ -23,3 +23,73 @@ A helper to create and maintain a global state without redux. (based on react ho
 ```bash
 $ npm i use-root-reducer --save
 ```
+
+## Usage
+
+**First of all, create a global state and a global dispatch function in your root component:**
+
+```jsx
+// app.jsx
+import React, { useReducer } from "react";
+import useRootReducer from "use-root-reducer";
+import { fooReducer, barReducer } from "./reducer";
+import { StateContext, DispatchContext } from "./context";
+
+const App = ({ children }) => {
+  const [state, dispatch] = useRootReducer({
+    foo: useReducer(fooReducer, "foo"),
+    bar: useReducer(barReducer, "bar")
+  });
+  return (
+    <DispatchContext.Provider value={dispatch}>
+      <StateContext.Provider value={state}>{children}</StateContext.Provider>
+    </DispatchContext.Provider>
+  );
+};
+
+export default App;
+```
+
+You can pass your global state and global dispatch method (it will have `foo` and `bar` key-value in the above example) to your children components via props or with [React Context API](https://reactjs.org/docs/context.html "React Context").
+
+**Second, it's recommended to maintain your context code in a independent file:**
+
+```jsx
+// context.jsx
+import React from "react";
+
+export const StateContext = React.createContext({});
+
+export const DispatchContext = React.createContext(null);
+
+export const OtherContext = React.createContext();
+```
+
+**In the end, in your child components you can access your global state and global dispatch with `useContext`:**
+
+```jsx
+//
+import React from "react";
+
+import { StateContext, DispatchContext } from "./context.js";
+
+export default () => {
+  const state = React.useContext(StateContext);
+  const dispatch = React.useContext(DispatchContext);
+
+  const { foo, bar } = state;
+
+  return (
+    <button
+      onClick={() => {
+        // dispatch your action and will be received in all your reducers
+        dispatch({ type: "update", payload: "foo updated", meta: "foo" });
+      }}
+    >{`${foo} and ${bar}`}</button>
+  );
+};
+```
+
+## License
+
+[MIT](LICENSE)
