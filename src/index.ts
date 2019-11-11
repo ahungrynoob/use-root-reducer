@@ -1,6 +1,10 @@
-import { Reducer, ReducerState, Dispatch, ReducerAction } from "react";
-
-let useRootReducerDispatch: Dispatch<any>;
+import {
+  Reducer,
+  ReducerState,
+  Dispatch,
+  ReducerAction,
+  useCallback
+} from "react";
 
 interface IReducerMap<A> {
   [key: string]: [
@@ -29,14 +33,13 @@ export default function useRootReducer<T extends IReducerMap<any>>(
     }),
     {} as RootReduceState<T>
   );
-  if (!useRootReducerDispatch) {
-    useRootReducerDispatch = (action: RootReduceAction<T>) => {
-      rootStateKeys.forEach(key => {
-        const fn = reducerMap[key][1];
-        fn(action);
-      });
-    };
-  }
+
+  const useRootReducerDispatch = useCallback((action: RootReduceAction<T>) => {
+    rootStateKeys.forEach(key => {
+      const fn = reducerMap[key][1];
+      fn(action);
+    });
+  }, rootStateKeys);
 
   return [rootState, useRootReducerDispatch];
 }
