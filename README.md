@@ -14,7 +14,12 @@
 [download-image]: https://img.shields.io/npm/dm/use-root-reducer.svg?style=flat-square
 [download-url]: https://npmjs.org/package/use-root-reducer
 
-A helper to create and maintain a global state without redux. (based on react hooks)
+A helper to create and maintain a root state without redux. (based on react hooks)
+**The implementation is quit simple:**
+
+1. Childcomponents access root state and root dispatch function throught [React Context API]('https://reactjs.org/docs/context.html') and [useContext hook]('https://reactjs.org/docs/hooks-reference.html#usecontext')
+2. When call the root dispatch, it will traverse your dispatches and pass action argv which are outputed by [useReducer hook]('https://reactjs.org/docs/hooks-reference.html#usereducer').
+3. **The root dispatch function outputed by `use-root-reducer` is immutable in per functional component.**
 
 ---
 
@@ -26,18 +31,22 @@ $ npm i use-root-reducer --save
 
 ## Usage
 
-**First of all, create a global state and a global dispatch function in your root component:**
+**First of all, create a root state and a root dispatch provider as `RootReducerProvider` in a independent file which can improve performance.[Avoiding unnecessary renders with React context]('https://frontarm.com/james-k-nelson/react-context-performance/')**
 
 ```jsx
-// app.jsx
-import React, { useReducer } from "react";
+// context.jsx
+import React, { Dispatch, useReducer } from "react";
 import useRootReducer from "use-root-reducer";
-import { fooReducer, barReducer } from "./reducer";
-import { StateContext, DispatchContext } from "./context";
+import { RootAction } from "../redux/action";
+import { fooReducer,barReducer } from "../redux/reducer";
 
-const App = ({ children }) => {
+export const StateContext = React.createContext({});
+
+export const DispatchContext = React.createContext(null);
+
+export const RootReducerProvider = ({ children, foo, bar }) => {
   const [state, dispatch] = useRootReducer({
-    foo: useReducer(fooReducer, "foo"),
+    foo: useReducer(fooReducer, "foo")
     bar: useReducer(barReducer, "bar")
   });
   return (
@@ -46,26 +55,36 @@ const App = ({ children }) => {
     </DispatchContext.Provider>
   );
 };
+```
+
+**Second, import the root `RootReducerProvider` to your root component such as app.jsx**
+
+```jsx
+// app.jsx
+import React from "react";
+import { BrowserRouter, StaticRouter, Switch, Route } from "react-router-dom";
+import NotFound from "./notfound";
+import Content from "./content";
+import Home from "./home";
+import { RootReducerProvider } from "./context";
+
+const Router = __CLIENT__ ? BrowserRouter : StaticRouter;
+
+const App = props => {
+  const { location: staticLocation, context, bgIndex, foo, bar } = props;
+  return (
+    <Router location={staticLocation} context={context}>
+      <RootReducerProvider foo={foo} bar={bar}>
+        <div>children component</div>
+      </RootReducerProvider>
+    </Router>
+  );
+};
 
 export default App;
 ```
 
-You can pass your global state and global dispatch method (it will have `foo` and `bar` key-value in the above example) to your children components via props or with [React Context API](https://reactjs.org/docs/context.html "React Context").
-
-**Second, it's recommended to maintain your context code in a independent file:**
-
-```jsx
-// context.jsx
-import React from "react";
-
-export const StateContext = React.createContext({});
-
-export const DispatchContext = React.createContext(null);
-
-export const OtherContext = React.createContext();
-```
-
-**In the end, in your child components you can access your global state and global dispatch with `useContext`:**
+**In the end, in your child components you can access your root state and root dispatch with `useContext`:**
 
 ```jsx
 //
