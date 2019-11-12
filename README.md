@@ -15,10 +15,11 @@
 [download-url]: https://npmjs.org/package/use-root-reducer
 
 A helper to create and maintain a root state without redux. (based on react hooks)
+<br/>
 **The implementation is quit simple:**
 
-1. Childcomponents access root state and root dispatch function throught [React Context API]('https://reactjs.org/docs/context.html') and [useContext hook]('https://reactjs.org/docs/hooks-reference.html#usecontext')
-2. When call the root dispatch, it will traverse your dispatches and pass action argv which are outputed by [useReducer hook]('https://reactjs.org/docs/hooks-reference.html#usereducer').
+1. Childcomponents access root state and root dispatch function throught [React Context API](https://reactjs.org/docs/context.html) and [useContext hook](https://reactjs.org/docs/hooks-reference.html#usecontext)
+2. When call the root dispatch, it will traverse your dispatches and pass action argv which are outputed by [useReducer hook](https://reactjs.org/docs/hooks-reference.html#usereducer).
 3. **The root dispatch function outputed by `use-root-reducer` is immutable in per functional component.**
 
 ---
@@ -31,7 +32,7 @@ $ npm i use-root-reducer --save
 
 ## Usage
 
-**First of all, create a root state and a root dispatch provider as `RootReducerProvider` in a independent file which can improve performance.[Avoiding unnecessary renders with React context]('https://frontarm.com/james-k-nelson/react-context-performance/')**
+**First of all, create a root state and a root dispatch provider as `RootReducerProvider` in a independent file which can improve performance.[Avoiding unnecessary renders with React context](https://frontarm.com/james-k-nelson/react-context-performance/)**
 
 ```jsx
 // context.jsx
